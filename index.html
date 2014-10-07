@@ -1,0 +1,294 @@
+<!doctype html>
+<html>
+<head>
+  <title>YouTube Fighter</title>
+  <style>
+    body { margin: 50px; }
+    canvas#screen { border: 1px solid gray; }
+    p { text-align: center; }
+  </style>
+</head>
+<body>
+  <center><canvas id="screen" width="640" height="480"></canvas></center>
+  <p>Move with arrows. Shoot with spacebar.</p>
+  <p>Defeat all seven levels to win!</p>
+</body>
+<script>
+var raf=window.requestAnimationFrame||window.mozRequestAnimationFrame||
+window.webkitRequestAnimationFrame;
+var SMH=3;var SR=15.0;var SS=300.0;var SM=20.0;var SVS=100.0;
+var BS=600.0;var CS=150.0;var BR=12.0;var BS2=300.0;var MSS=200.0;
+var MA=500.0;var SPR=50.0;var LV=[
+[{t:1,h:3,x:0,y:-50,hx:245,hy:50,cx:240,cy:100},
+{t:1,h:3,x:40,y:-50,hx:295,hy:50,cx:240,cy:120},
+{t:1,h:3,x:80,y:-50,hx:345,hy:50,cx:220,cy:140},
+{t:1,h:3,x:120,y:-50,hx:395,hy:50,cx:240,cy:140},
+{t:1,h:3,x:160,y:-50,hx:245,hy:100,cx:260,cy:140},
+{t:1,h:3,x:200,y:-50,hx:295,hy:100,cx:280,cy:140},
+{t:1,h:3,x:240,y:-50,hx:345,hy:100,cx:240,cy:160},
+{t:1,h:3,x:280,y:-50,hx:395,hy:100,cx:240,cy:180},
+{t:1,h:3,x:320,y:-50,hx:245,hy:150,cx:240,cy:200},
+{t:1,h:3,x:360,y:-50,hx:295,hy:150,cx:260,cy:220},
+{t:1,h:3,x:400,y:-50,hx:345,hy:150,cx:280,cy:220},
+{t:1,h:3,x:440,y:-50,hx:395,hy:150,cx:390,cy:100},
+{t:1,h:3,x:480,y:-50,hx:245,hy:200,cx:390,cy:140},
+{t:1,h:3,x:520,y:-50,hx:295,hy:200,cx:390,cy:160},
+{t:1,h:3,x:560,y:-50,hx:345,hy:200,cx:390,cy:180},
+{t:1,h:3,x:600,y:-50,hx:395,hy:200,cx:390,cy:200},
+{t:1,h:3,x:640,y:-50,hx:320,hy:250,cx:390,cy:220}],
+[{t:0,h:2,x:-60,y:0,hx:320,hy:100,cx:200,cy:140},
+{t:0,h:2,x:700,y:0,hx:270,hy:100,cx:200,cy:160},
+{t:0,h:2,x:-60,y:20,hx:370,hy:100,cx:200,cy:180},
+{t:0,h:2,x:700,y:20,hx:220,hy:100,cx:200,cy:200},
+{t:0,h:2,x:-60,y:40,hx:420,hy:100,cx:200,cy:220},
+{t:0,h:2,x:700,y:40,hx:170,hy:100,cx:220,cy:160},
+{t:0,h:2,x:-60,y:60,hx:470,hy:100,cx:240,cy:140},
+{t:0,h:2,x:700,y:60,hx:320,hy:150,cx:260,cy:140},
+{t:0,h:2,x:-60,y:80,hx:270,hy:150,cx:280,cy:160},
+{t:0,h:2,x:700,y:80,hx:370,hy:150,cx:280,cy:180},
+{t:0,h:2,x:-60,y:100,hx:220,hy:150,cx:280,cy:200},
+{t:0,h:2,x:700,y:100,hx:420,hy:150,cx:280,cy:220},
+{t:0,h:2,x:-60,y:120,hx:170,hy:150,cx:350,cy:140},
+{t:0,h:2,x:700,y:120,hx:470,hy:150,cx:350,cy:160},
+{t:0,h:2,x:-60,y:140,hx:320,hy:200,cx:350,cy:180},
+{t:0,h:2,x:700,y:140,hx:270,hy:200,cx:350,cy:200},
+{t:0,h:2,x:-60,y:160,hx:370,hy:200,cx:370,cy:220},
+{t:0,h:2,x:700,y:160,hx:220,hy:200,cx:390,cy:220},
+{t:0,h:2,x:-60,y:180,hx:420,hy:200,cx:410,cy:220},
+{t:0,h:2,x:700,y:180,hx:170,hy:200,cx:430,cy:140},
+{t:0,h:2,x:-60,y:200,hx:470,hy:200,cx:430,cy:160},
+{t:0,h:2,x:700,y:200,hx:320,hy:250,cx:430,cy:180},
+{t:0,h:2,x:-60,y:220,hx:270,hy:250,cx:430,cy:200},
+{t:0,h:2,x:700,y:220,hx:370,hy:250,cx:430,cy:220},
+{t:0,h:2,x:-60,y:240,hx:220,hy:250,cx:430,cy:240},
+{t:0,h:2,x:700,y:240,hx:420,hy:250,cx:410,cy:260},
+{t:0,h:2,x:-60,y:260,hx:170,hy:250,cx:390,cy:260},
+{t:0,h:2,x:700,y:260,hx:470,hy:250,cx:370,cy:260}],
+[{t:1,h:4,x:100,y:-100,hx:300,hy:50,cx:240,cy:200},
+{t:2,h:4,x:200,y:-100,hx:300,hy:80,cx:260,cy:200},
+{t:1,h:4,x:440,y:-100,hx:300,hy:110,cx:240,cy:220},
+{t:2,h:4,x:540,y:-100,hx:300,hy:140,cx:260,cy:220},
+{t:1,h:4,x:-60,y:300,hx:300,hy:170,cx:430,cy:160},
+{t:2,h:4,x:700,y:300,hx:300,hy:200,cx:410,cy:140},
+{t:1,h:4,x:-60,y:400,hx:300,hy:230,cx:390,cy:140},
+{t:2,h:4,x:700,y:400,hx:320,hy:260,cx:370,cy:140},
+{t:1,h:4,x:20,y:-50,hx:340,hy:50,cx:350,cy:160},
+{t:2,h:4,x:120,y:-50,hx:340,hy:80,cx:350,cy:180},
+{t:1,h:4,x:220,y:-50,hx:340,hy:110,cx:350,cy:200},
+{t:2,h:4,x:320,y:-50,hx:340,hy:140,cx:370,cy:220},
+{t:1,h:4,x:420,y:-50,hx:340,hy:170,cx:390,cy:220},
+{t:2,h:4,x:520,y:-50,hx:340,hy:200,cx:410,cy:220},
+{t:1,h:4,x:620,y:-50,hx:340,hy:230,cx:430,cy:220}],
+[{t:0,h:2,x:320,y:-50,hx:70,hy:150,cx:280,cy:160},
+{t:0,h:2,x:320,y:-50,hx:120,hy:150,cx:260,cy:140},
+{t:0,h:2,x:320,y:-50,hx:170,hy:150,cx:240,cy:140},
+{t:0,h:2,x:320,y:-50,hx:220,hy:150,cx:220,cy:140},
+{t:0,h:2,x:320,y:-50,hx:270,hy:150,cx:200,cy:160},
+{t:0,h:2,x:320,y:-50,hx:320,hy:150,cx:200,cy:180},
+{t:0,h:2,x:320,y:-50,hx:370,hy:150,cx:200,cy:200},
+{t:0,h:2,x:320,y:-50,hx:420,hy:150,cx:220,cy:220},
+{t:0,h:2,x:320,y:-50,hx:470,hy:150,cx:240,cy:220},
+{t:0,h:2,x:320,y:-50,hx:520,hy:150,cx:260,cy:220},
+{t:0,h:2,x:320,y:-50,hx:570,hy:150,cx:280,cy:220},
+{t:3,h:2,x:320,y:-50,hx:95,hy:150,cx:350,cy:240},
+{t:3,h:2,x:320,y:-50,hx:145,hy:150,cx:350,cy:220},
+{t:3,h:2,x:320,y:-50,hx:195,hy:150,cx:370,cy:200},
+{t:3,h:2,x:320,y:-50,hx:245,hy:150,cx:370,cy:180},
+{t:3,h:2,x:320,y:-50,hx:295,hy:150,cx:390,cy:160},
+{t:3,h:2,x:320,y:-50,hx:345,hy:150,cx:390,cy:140},
+{t:3,h:2,x:320,y:-50,hx:395,hy:150,cx:410,cy:120},
+{t:3,h:2,x:320,y:-50,hx:445,hy:150,cx:410,cy:100},
+{t:3,h:2,x:320,y:-50,hx:495,hy:150,cx:430,cy:80},
+{t:3,h:2,x:320,y:-50,hx:545,hy:150,cx:430,cy:60}],
+[{t:4,h:2,x:320,y:150,hx:0,hy:0,cx:200,cy:100},
+{t:4,h:2,x:320,y:150,hx:12,hy:0,cx:200,cy:120},
+{t:4,h:2,x:320,y:150,hx:24,hy:0,cx:200,cy:140},
+{t:4,h:2,x:320,y:150,hx:36,hy:0,cx:200,cy:160},
+{t:4,h:2,x:320,y:150,hx:48,hy:0,cx:200,cy:180},
+{t:4,h:2,x:320,y:150,hx:60,hy:0,cx:200,cy:200},
+{t:4,h:2,x:320,y:150,hx:72,hy:0,cx:200,cy:220},
+{t:4,h:2,x:320,y:150,hx:84,hy:0,cx:220,cy:220},
+{t:4,h:2,x:320,y:150,hx:96,hy:0,cx:240,cy:220},
+{t:4,h:2,x:320,y:150,hx:108,hy:0,cx:260,cy:220},
+{t:4,h:2,x:320,y:150,hx:120,hy:0,cx:280,cy:200},
+{t:4,h:2,x:320,y:150,hx:132,hy:0,cx:280,cy:180},
+{t:4,h:2,x:320,y:150,hx:144,hy:0,cx:280,cy:160},
+{t:4,h:2,x:320,y:150,hx:156,hy:0,cx:260,cy:140},
+{t:4,h:2,x:320,y:150,hx:168,hy:0,cx:240,cy:140},
+{t:4,h:2,x:320,y:150,hx:180,hy:0,cx:220,cy:140},
+{t:4,h:2,x:320,y:150,hx:192,hy:0,cx:430,cy:140},
+{t:4,h:2,x:320,y:150,hx:204,hy:0,cx:410,cy:140},
+{t:4,h:2,x:320,y:150,hx:216,hy:0,cx:390,cy:140},
+{t:4,h:2,x:320,y:150,hx:228,hy:0,cx:370,cy:140},
+{t:4,h:2,x:320,y:150,hx:240,hy:0,cx:350,cy:160},
+{t:4,h:2,x:320,y:150,hx:252,hy:0,cx:370,cy:180},
+{t:4,h:2,x:320,y:150,hx:264,hy:0,cx:390,cy:180},
+{t:4,h:2,x:320,y:150,hx:276,hy:0,cx:410,cy:180},
+{t:4,h:2,x:320,y:150,hx:288,hy:0,cx:430,cy:200},
+{t:4,h:2,x:320,y:150,hx:300,hy:0,cx:410,cy:220},
+{t:4,h:2,x:320,y:150,hx:312,hy:0,cx:390,cy:220},
+{t:4,h:2,x:320,y:150,hx:324,hy:0,cx:370,cy:220},
+{t:4,h:2,x:320,y:150,hx:336,hy:0,cx:350,cy:220}],
+[{t:5,h:2,x:0,y:530,hx:10,hy:150,cx:200,cy:140},
+{t:5,h:2,x:0,y:530,hx:30,hy:150,cx:200,cy:160},
+{t:5,h:2,x:0,y:530,hx:50,hy:150,cx:200,cy:180},
+{t:5,h:2,x:0,y:530,hx:70,hy:150,cx:200,cy:200},
+{t:5,h:2,x:0,y:530,hx:90,hy:150,cx:220,cy:220},
+{t:5,h:2,x:0,y:530,hx:110,hy:150,cx:240,cy:140},
+{t:5,h:2,x:0,y:530,hx:130,hy:150,cx:240,cy:160},
+{t:5,h:2,x:0,y:530,hx:150,hy:150,cx:240,cy:180},
+{t:5,h:2,x:0,y:530,hx:170,hy:150,cx:240,cy:200},
+{t:5,h:2,x:0,y:530,hx:190,hy:150,cx:260,cy:220},
+{t:5,h:2,x:0,y:530,hx:210,hy:150,cx:280,cy:140},
+{t:5,h:2,x:0,y:530,hx:230,hy:150,cx:280,cy:160},
+{t:5,h:2,x:0,y:530,hx:250,hy:150,cx:280,cy:180},
+{t:5,h:2,x:0,y:530,hx:270,hy:150,cx:280,cy:200},
+{t:5,h:2,x:0,y:530,hx:290,hy:150,cx:410,cy:220},
+{t:5,h:2,x:0,y:530,hx:310,hy:150,cx:390,cy:220},
+{t:5,h:2,x:640,y:530,hx:330,hy:150,cx:370,cy:220},
+{t:5,h:2,x:640,y:530,hx:350,hy:150,cx:350,cy:200},
+{t:5,h:2,x:640,y:530,hx:370,hy:150,cx:350,cy:180},
+{t:5,h:2,x:640,y:530,hx:390,hy:150,cx:350,cy:160},
+{t:5,h:2,x:640,y:530,hx:410,hy:150,cx:370,cy:140},
+{t:5,h:2,x:640,y:530,hx:430,hy:150,cx:390,cy:140},
+{t:5,h:2,x:640,y:530,hx:450,hy:150,cx:410,cy:140},
+{t:5,h:2,x:640,y:530,hx:470,hy:150,cx:430,cy:140},
+{t:5,h:2,x:640,y:530,hx:490,hy:150,cx:430,cy:160},
+{t:5,h:2,x:640,y:530,hx:510,hy:150,cx:430,cy:180},
+{t:5,h:2,x:640,y:530,hx:530,hy:150,cx:430,cy:200},
+{t:5,h:2,x:640,y:530,hx:550,hy:150,cx:430,cy:220},
+{t:5,h:2,x:640,y:530,hx:570,hy:150,cx:430,cy:240},
+{t:5,h:2,x:640,y:530,hx:590,hy:150,cx:410,cy:260},
+{t:5,h:2,x:640,y:530,hx:610,hy:150,cx:390,cy:260},
+{t:5,h:2,x:640,y:530,hx:630,hy:150,cx:370,cy:260}],
+[{t:4,h:5,x:320,y:-100,hx:0,hy:0,cx:260,cy:220},
+{t:4,h:5,x:320,y:-100,hx:120,hy:0,cx:240,cy:220},
+{t:4,h:5,x:320,y:-100,hx:240,hy:0,cx:220,cy:220},
+{t:6,h:3,x:320,y:-100,hx:0,hy:0,cx:200,cy:200},
+{t:6,h:3,x:320,y:-100,hx:0,hy:30,cx:200,cy:180},
+{t:6,h:3,x:320,y:-100,hx:0,hy:60,cx:200,cy:160},
+{t:6,h:3,x:320,y:-100,hx:0,hy:90,cx:220,cy:140},
+{t:6,h:3,x:320,y:-100,hx:0,hy:120,cx:240,cy:140},
+{t:6,h:3,x:320,y:-100,hx:0,hy:150,cx:260,cy:140},
+{t:6,h:3,x:320,y:-100,hx:0,hy:180,cx:280,cy:140},
+{t:6,h:3,x:320,y:-100,hx:0,hy:210,cx:280,cy:160},
+{t:6,h:3,x:320,y:-100,hx:0,hy:240,cx:280,cy:180},
+{t:6,h:3,x:320,y:-100,hx:0,hy:270,cx:280,cy:200},
+{t:6,h:3,x:320,y:-100,hx:0,hy:300,cx:280,cy:220},
+{t:6,h:3,x:320,y:-100,hx:0,hy:330,cx:280,cy:240},
+{t:6,h:3,x:320,y:-100,hx:180,hy:0,cx:260,cy:260},
+{t:6,h:3,x:320,y:-100,hx:180,hy:30,cx:240,cy:260},
+{t:6,h:3,x:320,y:-100,hx:180,hy:60,cx:220,cy:260},
+{t:6,h:3,x:320,y:-100,hx:180,hy:90,cx:350,cy:140},
+{t:6,h:3,x:320,y:-100,hx:180,hy:120,cx:370,cy:160},
+{t:6,h:3,x:320,y:-100,hx:180,hy:150,cx:390,cy:180},
+{t:6,h:3,x:320,y:-100,hx:180,hy:180,cx:410,cy:200},
+{t:6,h:3,x:320,y:-100,hx:180,hy:210,cx:430,cy:220},
+{t:6,h:3,x:320,y:-100,hx:180,hy:240,cx:350,cy:220},
+{t:6,h:3,x:320,y:-100,hx:180,hy:270,cx:370,cy:200},
+{t:6,h:3,x:320,y:-100,hx:180,hy:300,cx:410,cy:160},
+{t:6,h:3,x:320,y:-100,hx:180,hy:330,cx:430,cy:140}]];
+var canvas=document.getElementById('screen');
+var game={timer:0,level:-1,ctrl:{
+left:false,right:false,up:false,down:false,fire:false},
+sh:{x:canvas.width/2,y:canvas.height-SM-SVS/2,hh:SMH},
+bts:[],mls:[],bds:[],cps:[],sns:[]};
+var dist=function(a,b){
+return Math.sqrt(Math.pow(a.x-b.x,2)+Math.pow(a.y-b.y,2));};
+var moveTowardsGoal=function(obj,speed,time){
+var dx=obj.gx-obj.x;var dy=obj.gy-obj.y;
+var scale=Math.min(1.0,speed*time/Math.sqrt(dx*dx+dy*dy));
+obj.x+=dx*scale;obj.y+=dy*scale;};
+var startLevel=function(){
+game.sh.hh=SMH;LV[game.level].forEach(function(spec){
+game.bds.push({type:spec.t,hh:spec.h,x:spec.x,y:spec.y,
+hx:spec.hx,hy:spec.hy,gx:spec.hx,gy: spec.hy,cx:spec.cx,cy:spec.cy});});}
+var prev_time_millis=+(new Date());var ctx=canvas.getContext('2d');
+var tick=function(){var current_time_millis=+(new Date());
+var time=0.001*(current_time_millis-prev_time_millis);
+prev_time_millis=current_time_millis;var old_timer=game.timer;game.timer+=time;
+var new_sns=[];game.sns.forEach(function(sn){
+sn.r+=SPR*time;if(sn.r< sn.mr)new_sns.push(sn);});
+game.sns=new_sns;var new_mls=[];game.mls.forEach(function(ml){
+ml.y+=ml.speed*time;ml.speed+=MA*time;
+if(game.sh.hh>0&& dist(ml,game.sh)< SR){
+game.sns.push({x:ml.x,y: ml.y,r:0,mr:20});
+game.sh.hh-=1;if(game.sh.hh<=0){game.sns.push({
+x:game.sh.x,y:game.sh.y,r:0,mr:80});}return;}
+if(ml.y< canvas.height)new_mls.push(ml);});
+game.mls=new_mls;var new_bts=[];game.bts.forEach(function(bt){
+bt.y-=BS*time;for(var i=0;i< game.bds.length;++i){
+if(dist(bt,game.bds[i])< BR){game.sns.push({x:bt.x,y:bt.y,r:0,mr:20});
+game.bds[i].hh-=1;return;}}if(bt.y > 0)new_bts.push(bt);});game.bts=new_bts;
+var new_cps=[];game.cps.forEach(function(cp){moveTowardsGoal(cp,CS,time);
+if(game.bds.length===0)cp.lifetime-=time;if(cp.lifetime > 0)new_cps.push(cp);
+});game.cps=new_cps;var new_bds=[];game.bds.forEach(function(bd){
+switch(bd.type){case 0:bd.gx=bd.hx+100.0*Math.cos(game.timer);
+bd.gy=bd.hy+50.0*Math.sin(game.timer);break;case 1:
+bd.gx=bd.hx-200.0*Math.sin(game.timer);bd.gy=bd.hy;break;case 2:
+bd.gx=bd.hx+200.0*Math.cos(1.5*game.timer);bd.gy=bd.hy;break;case 3:
+bd.gx=bd.hx+100.0*Math.sin(game.timer);bd.gy=bd.hy+50.0*Math.cos(game.timer);
+break;case 4:bd.gx=320+260.0*Math.cos(game.timer+bd.hx*Math.PI/180);
+bd.gy=150+120.0*Math.sin(game.timer+bd.hx*Math.PI/180);break;case 5:
+bd.gx=bd.hx;bd.gy=bd.hy+100.0*Math.cos(game.timer+bd.hx*Math.PI/180);break;
+case 6:bd.gx=320+80.0*Math.cos(3*game.timer+bd.hy*Math.PI/180)+
+200.0*Math.sin(game.timer+bd.hx*Math.PI/180);bd.gy=150+
+80.0*Math.sin(3*game.timer+bd.hy*Math.PI/180);break;}
+moveTowardsGoal(bd,BS2,time);if(bd.hh > 0)new_bds.push(bd);else{
+game.cps.push({x:bd.x,y:bd.y,gx:bd.cx,gy:bd.cy,lifetime:4.0+2.0*Math.random()
+});game.sns.push({x:bd.x,y:bd.y,r:0,mr:40});}});game.bds=new_bds;
+var ml_rate=1.0+0.5*game.level;if(game.bds.length > 0 &&
+(0|(game.timer*ml_rate))!==(0|(old_timer*ml_rate))){
+var attacker=game.bds[0|(Math.random()*game.bds.length)];game.mls.push({
+x:attacker.x,y:attacker.y,speed:MSS});}if(game.sh.hh > 0){
+if(game.ctrl.left && !game.ctrl.right){
+game.sh.x=Math.max(SM,game.sh.x-SS*time);}
+if(game.ctrl.right && !game.ctrl.left){game.sh.x=Math.min(canvas.width-SM,
+game.sh.x+SS*time);}if(game.ctrl.down && !game.ctrl.up){
+game.sh.y=Math.min(canvas.height-SM,game.sh.y+SS*time);}
+if(game.ctrl.up && !game.ctrl.down){game.sh.y=Math.max(canvas.height-SM-SVS,
+game.sh.y-SS*time);}if(game.ctrl.fire){
+game.bts.push({ x:game.sh.x,y:game.sh.y });game.ctrl.fire=false;}}
+if(game.level < 0){if(game.bts.length > 0){game.level=0;startLevel();}
+}else if(game.level < LV.length && game.sh.hh > 0 &&
+game.bds.length===0 && game.cps.length===0){++game.level;
+if(game.level < LV.length){startLevel();}}
+if(game.sh.hh <=0 && game.sns.length===0){game.bds=[];game.cps=[];
+game.bts=[];game.mls=[];game.sns=[];startLevel();}
+ctx.clearRect(0,0,canvas.width,canvas.height);
+game.cps.forEach(function(cp){
+ctx.fillStyle='rgba(200,250,250,'+Math.min(1.0,cp.lifetime)+')';
+ctx.fillRect(cp.x-7,cp.y-7,14,14);});
+game.bds.forEach(function(bd){switch(bd.hh){
+case 1:ctx.fillStyle='rgb(60,150,0)';break;
+case 2:ctx.fillStyle='rgb(160,150,0)';break;
+case 3:ctx.fillStyle='rgb(240,150,0)';break;
+case 4:ctx.fillStyle='rgb(240,0,0)';break;
+default:ctx.fillStyle='rgb(240,0,150)';break;}
+ctx.fillRect(bd.x-BR,bd.y-BR,2*BR,2*BR);});ctx.fillStyle='rgb(0,0,200)';
+game.bts.forEach(function(bt){ctx.fillRect(bt.x-2,bt.y-4,4,8);});
+if(game.sh.hh > 0){ctx.fillStyle='rgb(200,0,'+(120*(SMH-game.sh.hh))+')';
+ctx.beginPath();ctx.moveTo(game.sh.x,game.sh.y-SR);
+ctx.lineTo(game.sh.x+SR,game.sh.y+SR);ctx.lineTo(game.sh.x-SR,game.sh.y+SR);
+ctx.closePath();ctx.fill();}
+ctx.fillStyle='rgb(0,0,0)';game.mls.forEach(function(ml){
+ctx.fillRect(ml.x-2,ml.y-8,4,16);});game.sns.forEach(function(sn){
+ctx.fillStyle='rgba(250,125,0,'+(1-sn.r/sn.mr)+')';
+ctx.beginPath();ctx.arc(sn.x,sn.y,sn.r,0,2*Math.PI,false);ctx.closePath();
+ctx.fill();});ctx.fillStyle='rgb(0,0,0)';ctx.font='20px Courier';
+if(game.level >=LV.length){ctx.textAlign='center';
+ctx.fillText('YOU WIN!',canvas.width/2,canvas.height/2);
+} else if(game.level >=0){ctx.textAlign='left';
+ctx.fillText('Level '+(game.level+1),canvas.width-100,20);
+} else {ctx.textAlign='center';
+ctx.fillText('Shoot to begin',canvas.width/2,canvas.height/2);}
+raf(tick);}; window.addEventListener('keydown',function(evt){
+switch(evt.keyCode){case 0x20:game.ctrl.fire=true;break;case 0x25:
+game.ctrl.left=true;break;case 0x26:game.ctrl.up=true;break;case 0x27:
+game.ctrl.right=true;break;case 0x28:game.ctrl.down=true;break;default:break;
+}},false);window.addEventListener('keyup',function(evt){switch(evt.keyCode){
+case 0x25:game.ctrl.left=false;break;case 0x26:game.ctrl.up=false;break;
+case 0x27:game.ctrl.right=false;break;case 0x28:game.ctrl.down=false;break;
+default:break;}},false);raf(tick);
+</script>
+</html>
